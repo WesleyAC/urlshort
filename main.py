@@ -1,4 +1,4 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, request, redirect
 from int2base import int2base
 import json
 
@@ -38,6 +38,10 @@ def get_url(slug):
             "slug": slug
     }
     return Response(json.dumps(response), mimetype="application/json")
+
+@app.route("/r/<slug>")
+def redirect_url(slug):
+    return redirect(url_map[slug], code=301)
 
 if __name__ == "__main__":
     app.run()
