@@ -36,20 +36,21 @@ def increment_views(slug):
 def index():
     return "Hello World!"
 
-@app.route("/urls", methods=["GET", "POST"])
-def urls_route():
-    if request.method == "POST":
-        if "url" in request.form:
-            if not url_exists(request.form["url"]):
-                url_map.append({
-                    "slug": make_slug(),
-                    "url": request.form["url"],
-                    "views": 0})
-            return Response(json.dumps(find_item_by("url", request.form["url"])), mimetype="application/json")
-        else:
-            return Response("Error: `url` parameter is required.", mimetype="text/plain", status=500)
+@app.route("/urls", methods=["POST"])
+def urls_post_route():
+    if "url" in request.form:
+        if not url_exists(request.form["url"]):
+            url_map.append({
+                "slug": make_slug(),
+                "url": request.form["url"],
+                "views": 0})
+        return Response(json.dumps(find_item_by("url", request.form["url"])), mimetype="application/json")
     else:
-        return Response(json.dumps(url_map), mimetype="application/json")
+        return Response("Error: `url` parameter is required.", mimetype="text/plain", status=500)
+
+@app.route("/urls", methods=["GET"])
+def urls_get_route():
+    return Response(json.dumps(url_map), mimetype="application/json")
 
 @app.route("/urls/<slug>")
 def get_url_route(slug):
