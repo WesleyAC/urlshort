@@ -8,7 +8,7 @@ url_map = []
 
 map_len = 0
 
-def make_slug(url):
+def make_slug():
     global map_len
     map_len += 1
     return int2base(map_len, 36)
@@ -20,9 +20,9 @@ def find_item_by(type, value):
     else:
         return url_map[results[0]]
 
-def slug_exists(slug):
+def url_exists(url):
     for item in url_map:
-        if item["slug"] == slug:
+        if item["url"] == url:
             return True
     return False
 
@@ -40,12 +40,12 @@ def index():
 def urls_route():
     if request.method == "POST":
         if "url" in request.form:
-            if not slug_exists(request.form["url"]):
+            if not url_exists(request.form["url"]):
                 url_map.append({
-                    "slug": make_slug(request.form["url"]),
+                    "slug": make_slug(),
                     "url": request.form["url"],
                     "views": 0})
-            return Response(json.dumps({"url": request.form["url"], "slug": find_item_by("url", request.form["url"])["slug"]}), mimetype="application/json")
+            return Response(json.dumps(find_item_by("url", request.form["url"])), mimetype="application/json")
         else:
             return Response("Error: `url` parameter is required.", mimetype="text/plain", status=500)
     else:
